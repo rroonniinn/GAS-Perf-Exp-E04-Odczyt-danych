@@ -1,18 +1,15 @@
-# PRV.016 | GAS Perf. Exp | E03
-## Test: 	Zapis danych do arkusza (cały zakres)
+# PRV.016 | GAS Perf. Exp | E04
+## Test: 	Odczyt danych (cały zakres)
 
-#### Kod: Z03
+#### Kod: EX.04
 
 #### Cel
-Poznanie czasów zapisu danych dla:
+Poznanie czasów odczytu danych dla:
 1. Różnych struktur arkuszy (internal, external, cache)
-2. Różnych wielkości arkuszy (zestawu danych)"
+2. Różnych wielkości arkuszy (zestawu danych)
 
 #### Zadanie
-1. Zapisanie losowej tablicy danych do istniejącego źródła.
-2. Losowa tablica jest generowana w pamięci (czas tej operacji jest znikomy)
-3. Wklejana jest cała tablica 1:1.
-4. Zakres docelowego arkusza jest równy wymiarowi danych - nie są dodawane nowe wiersze ani kolumny"
+1. Odczyt wszystkich danych ze wskazanego źródła (cały zakres)
 
 
 #### Próbki
@@ -24,4 +21,4 @@ Arkusze o 15 kolumnach, o różnej liczbie wierszy: od 100 do 16 000
 3. Arkusze (dane) osadzone w cach'ach"
 
 #### Plik
-Adres pliku z czasami i wykresami: https://docs.google.com/spreadsheets/d/1qV5DkLLS2XcZC2Oc3QsikbOtsA41N2PNBKyZghWbytY/edit#gid=252400475
+Adres pliku z czasami i wykresami: https://docs.google.com/spreadsheets/d/1myQpbcka7QBmGV0jhvLbbS9ktJGUO6kYhZ1p8G4YOM4/edit#gid=1946600950
