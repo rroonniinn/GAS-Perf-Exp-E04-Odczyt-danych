@@ -1,9 +1,11 @@
 /* eslint-disable max-params */
 import { looper } from '../../../GAS | Library/v01/utils/looper';
-import { getLocal, getExternal, getCache } from './tasks';
-import { runJbJ, runTbT, fire } from './helpers';
+import { randomArrayIndexes } from '../../../GAS | Library/v02/arr/randomArrayIndexes';
+import { disp } from '../../../GAS | Library/v01/gas/disp';
 
 import { SHEETS } from './config';
+import { runJbJ, runTbT, fire, single } from './helpers';
+import { getLocal, getExternal, getCache } from './tasks';
 
 /* ***************** Strukrura testów ******************* */
 
@@ -64,4 +66,27 @@ const exps = {
 	cacheTbT: fire(50, getCache, tbt, `${DESC}(cache)`, SHEETS.CACHE),
 };
 
-export { exps };
+/* ******************** TESTY POJEDYŃCZE *********** */
+const randomCode = [
+	'l100',
+	'l200',
+	'l500',
+	'l1000',
+	'l2000',
+	'l4000',
+	'l8000',
+	'16000',
+];
+const randomFn = [getLocal, getExternal, getCache];
+
+const runRandomSingle = () => {
+	const [idxSheet] = randomArrayIndexes(randomCode, 1, false, false);
+	const [idxFn] = randomArrayIndexes(randomFn, 1, false, false);
+
+	single(randomCode[idxSheet], randomFn[idxFn]);
+	console.log(
+		`'idxSheet': ${idxSheet} |  Arkusz: ${randomCode[idxSheet]} | idxFn: ${idxFn} | Fn: ${randomFn[idxFn].name}`
+	);
+};
+
+export { exps, runRandomSingle };

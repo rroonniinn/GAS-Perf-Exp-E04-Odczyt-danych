@@ -58,4 +58,15 @@ const EXT_SHEET_URL = {
  */
 const EXT_SHEET_NAME = 'res';
 
-export { SHEETS, LOCAL_SHEET, EXT_SHEET_URL, EXT_SHEET_NAME };
+const SHORT_DSC = {
+	l100: 'Arr 1: 100',
+	l200: 'Arr 2: 200',
+	l500: 'Arr 3: 500',
+	l1000: 'Arr 4: 1000',
+	l2000: 'Arr 5: 2000',
+	l4000: 'Arr 6: 4000',
+	l8000: 'Arr 7: 8000',
+	l16000: 'Arr 8: 16000',
+};
+
+export { SHEETS, LOCAL_SHEET, EXT_SHEET_URL, EXT_SHEET_NAME, SHORT_DSC };

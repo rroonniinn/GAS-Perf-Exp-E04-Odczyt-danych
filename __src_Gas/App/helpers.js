@@ -4,6 +4,8 @@ import { paste } from '../../../GAS | Library/v02/gas/paste';
 import { getSheet } from '../../../GAS | Library/v02/gas/getSheet';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
 
+import { SHORT_DSC, SHEETS } from './config';
+
 /* ***************** Helpers ******************* */
 
 /**
@@ -47,4 +49,36 @@ const printTimes = sheet => () =>
 
 const fire = (quant, callback, testTypeCallback, desc, resSheet) =>
 	pipe(testTypeCallback(quant, callback, desc), printTimes(resSheet));
-export { runJbJ, runTbT, fire };
+
+const getLongDesc = callback => {
+	if (callback.name === 'getLocal') {
+		return 'Odczyt danych (local)';
+	}
+	if (callback.name === 'getExternal') {
+		return 'Odczyt danych (external)';
+	}
+	return 'Odczyt danych (cache)';
+};
+
+const whereToPrint = callback => {
+	if (callback.name === 'getLocal') {
+		return SHEETS.LOCAL;
+	}
+	if (callback.name === 'getExternal') {
+		return SHEETS.EXTER;
+	}
+	return SHEETS.CACHE;
+};
+
+const single = (taskCode, callback) => {
+	performanceCheckerObj(
+		loggerRes,
+		callback(taskCode),
+		SHORT_DSC[taskCode],
+		getLongDesc(callback),
+		'Single Random'
+	);
+	printTimes(whereToPrint(callback))();
+};
+
+export { runJbJ, runTbT, fire, single };

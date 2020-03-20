@@ -77,7 +77,7 @@ const getCache = taskCode =>
 const regenerateCache = () => {
 	Object.keys(generateData).forEach(key => {
 		const randomData = generateData[key]();
-		crusherCache.put(key, randomData, 120);
+		crusherCache.put(key, randomData, 360); // maxymalny czas cacha
 		console.log(
 			`Regenerated ${randomData.length} rows | First cell: ${randomData[0][0]}`
 		);
