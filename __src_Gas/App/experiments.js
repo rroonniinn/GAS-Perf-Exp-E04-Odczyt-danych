@@ -1,11 +1,10 @@
 /* eslint-disable max-params */
 import { looper } from '../../../GAS | Library/v01/utils/looper';
-import { randomArrayIndexes } from '../../../GAS | Library/v02/arr/randomArrayIndexes';
-import { disp } from '../../../GAS | Library/v01/gas/disp';
+import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
 
 import { SHEETS } from './config';
 import { runJbJ, runTbT, fire, single } from './helpers';
-import { getLocal, getExternal, getCache } from './tasks';
+import { getLocal, getExternal, getCache, getHub } from './tasks';
 
 /* ***************** Strukrura testów ******************* */
 
@@ -75,18 +74,16 @@ const randomCode = [
 	'l2000',
 	'l4000',
 	'l8000',
-	'16000',
+	'l16000',
 ];
-const randomFn = [getLocal, getExternal, getCache];
+const randomFn = [getLocal, getExternal, getCache, getHub];
 
 const runRandomSingle = () => {
-	const [idxSheet] = randomArrayIndexes(randomCode, 1, false, false);
-	const [idxFn] = randomArrayIndexes(randomFn, 1, false, false);
+	const [code] = randomFromArray(randomCode, 1);
+	const [fn] = randomFromArray(randomFn, 1);
+	console.log(`Arkusz: ${code} | Fn: ${fn.name}`);
 
-	single(randomCode[idxSheet], randomFn[idxFn]);
-	console.log(
-		`'idxSheet': ${idxSheet} |  Arkusz: ${randomCode[idxSheet]} | idxFn: ${idxFn} | Fn: ${randomFn[idxFn].name}`
-	);
+	single(code, fn);
 };
 
 export { exps, runRandomSingle };

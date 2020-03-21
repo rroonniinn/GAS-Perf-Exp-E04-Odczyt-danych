@@ -5,7 +5,12 @@ import { getIdFromUrl } from '../../../GAS | Library/v02/gas/getIdFromUrl';
 import { crusherCache } from '../../../GAS | Library/v02/cache/crusherCache';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
 
-import { LOCAL_SHEET, EXT_SHEET_URL, EXT_SHEET_NAME } from './config';
+import {
+	LOCAL_SHEET,
+	EXT_SHEET_URL,
+	EXT_SHEET_NAME,
+	EXT_SHEET_HUB_URL,
+} from './config';
 
 /**
  * Obiekt z funkcjami generującymi losowe tablice z numerami od 0 do 1000
@@ -47,7 +52,7 @@ const getLocal = taskCode =>
 	);
 
 /**
- * Wygeneruj losowe liczby i wklej je do zewnętrznego arkusza
+ * Pobiera dane z indywidualnych zewnętrznych arkuszy
  * @param {string} taskCode Zdefiniowany kod zadania np. l100
  * @returns {function}
  */
@@ -60,6 +65,22 @@ const getExternal = taskCode =>
 			),
 		getValues,
 		printInfo('external', taskCode)
+	);
+
+/**
+ * Pobiera dane z indywidualnych arkuszy w jednym zewnętrznym HUBie
+ * @param {string} taskCode Zdefiniowany kod zadania np. l100
+ * @returns {function}
+ */
+const getHub = taskCode =>
+	pipe(
+		() =>
+			getSheet(
+				LOCAL_SHEET[taskCode],
+				getIdFromUrl(EXT_SHEET_HUB_URL)
+			),
+		getValues,
+		printInfo('hub', taskCode)
 	);
 
 /**
@@ -84,4 +105,4 @@ const regenerateCache = () => {
 	});
 };
 
-export { getLocal, getExternal, getCache, regenerateCache };
+export { getLocal, getExternal, getCache, regenerateCache, getHub };

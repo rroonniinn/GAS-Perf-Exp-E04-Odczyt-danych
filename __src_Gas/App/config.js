@@ -3,6 +3,7 @@
  * @typedef {Object} TimesSheets
  * @property {string} LOCAL Wklejka lokalna
  * @property {string} EXTER Wklejka do zewnętrznych plików
+ * @property {string} HUB Wklejka do huba
  * @property {string} CACHE Wklejka do cacha
  */
 /**
@@ -11,6 +12,7 @@
 const SHEETS = {
 	LOCAL: 'T: Odczyt lokalnie',
 	EXTER: 'T: Odczyt external',
+	HUB: 'T: Odczyt hub',
 	CACHE: 'T: Odczyt cache',
 };
 
@@ -28,6 +30,14 @@ const LOCAL_SHEET = {
 	l8000: 'res8000',
 	l16000: 'res16000',
 };
+
+/**
+ * URL zewnętrznego pliku - HUBa, w którym znajdują się indywidualne arkusze z danymi
+ * @type {string} EXT_SHEET_NAME
+ */
+
+const EXT_SHEET_HUB_URL =
+	'https://docs.google.com/spreadsheets/d/1N6GoUJWaSUTn1PSU1SqacMK9Ukj5p5342oeQY9wROO4/edit#gid=483689928';
 
 /**
  * URLe zewnętrznych arkuszy z których pobieramy dane (pochodzą
@@ -52,11 +62,18 @@ const EXT_SHEET_URL = {
 	l16000:
 		'https://docs.google.com/spreadsheets/d/1_bjTKNKUP_AvAkxmi92peD2t9cdMrsRatprzVvUlIXg',
 };
+
 /**
  * Nazwa arkusza w zewnętrznym pliku, w którym znajdują się dane
  * @type {string} EXT_SHEET_NAME
  */
+
 const EXT_SHEET_NAME = 'res';
+
+/**
+ * Opis zadania wykorzysytwany w singlu
+ * @type {Object<string, string>}
+ */
 
 const SHORT_DSC = {
 	l100: 'Arr 1: 100',
@@ -69,4 +86,37 @@ const SHORT_DSC = {
 	l16000: 'Arr 8: 16000',
 };
 
-export { SHEETS, LOCAL_SHEET, EXT_SHEET_URL, EXT_SHEET_NAME, SHORT_DSC };
+/**
+ * Dłuższy opis wykorzystywany w singlu
+ * @type {Object<string, string>}
+ */
+
+const LONG_DESC = {
+	getLocal: 'Odczyt danych (local)',
+	getExternal: 'Odczyt danych (external)',
+	getHub: 'Odczyt danych (hub)',
+	getCache: 'Odczyt danych (cache)',
+};
+
+/**
+ * Gdzie wkleić wyniki ekspetymentów
+ * @type {Object<string, string>}
+ */
+
+const WHERE_TO_PRINT = {
+	getLocal: SHEETS.LOCAL,
+	getExternal: SHEETS.EXTER,
+	getHub: SHEETS.HUB,
+	getCache: SHEETS.CACHE,
+};
+
+export {
+	SHEETS,
+	LOCAL_SHEET,
+	EXT_SHEET_URL,
+	EXT_SHEET_NAME,
+	SHORT_DSC,
+	EXT_SHEET_HUB_URL,
+	LONG_DESC,
+	WHERE_TO_PRINT,
+};

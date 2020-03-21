@@ -1,10 +1,10 @@
 // @ts-nocheck
 
 import { exps, runRandomSingle } from './experiments';
-import { regenerateCache } from './tasks';
+import { regenerateCache, getHub } from './tasks';
 
 global.menu = {
-	test: () => console.log('hello'),
+	test: getHub('l100'),
 	exps,
 	runRandomSingle,
 	regenerateCache,
@@ -46,7 +46,7 @@ const menu = () => {
 		.addSeparator()
 		.addItem('Random Single', 'menu.runRandomSingle')
 		.addSeparator()
-		.addItem('Test', 'menu.test')
+		.addItem('-Test', 'menu.test')
 		.addSeparator()
 		.addItem('Update menu', 'onOpen')
 		.addToUi();
