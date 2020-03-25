@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { ditributeToOtherFiles } from './ditributeToOtherFiles';
 import { exps, runRandomSingle } from './experiments';
 import { regenerateCache, getHub } from './tasks';
 
@@ -8,15 +9,16 @@ global.menu = {
 	exps,
 	runRandomSingle,
 	regenerateCache,
+	ditributeToOtherFiles,
 };
 
-global.regenerateCache = () => {
-	regenerateCache();
-};
+// global.regenerateCache = () => {
+// 	regenerateCache();
+// };
 
-global.runRandomSingle = () => {
-	runRandomSingle();
-};
+// global.runRandomSingle = () => {
+// 	runRandomSingle();
+// };
 
 const menu = () => {
 	const ui = SpreadsheetApp.getUi();
@@ -46,7 +48,8 @@ const menu = () => {
 		.addSeparator()
 		.addItem('Random Single', 'menu.runRandomSingle')
 		.addSeparator()
-		.addItem('-Test', 'menu.test')
+		.addItem('Distribute', 'menu.ditributeToOtherFiles')
+		.addItem('Test', 'menu.test')
 		.addSeparator()
 		.addItem('Update menu', 'onOpen')
 		.addToUi();

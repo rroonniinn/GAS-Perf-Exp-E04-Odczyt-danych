@@ -28,6 +28,7 @@ const generateData = {
 	l8000: () => randomIntegersArray2d(8000, 15),
 	l16000: () => randomIntegersArray2d(16000, 15),
 };
+
 /**
  * Helper
  * Wpisuje w konsoli status działania

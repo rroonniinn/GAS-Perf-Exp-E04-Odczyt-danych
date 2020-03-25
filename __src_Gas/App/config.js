@@ -37,7 +37,7 @@ const LOCAL_SHEET = {
  */
 
 const EXT_SHEET_HUB_URL =
-	'https://docs.google.com/spreadsheets/d/1N6GoUJWaSUTn1PSU1SqacMK9Ukj5p5342oeQY9wROO4/edit#gid=483689928';
+	'https://docs.google.com/spreadsheets/d/1N6GoUJWaSUTn1PSU1SqacMK9Ukj5p5342oeQY9wROO4';
 
 /**
  * URLe zewnętrznych arkuszy z których pobieramy dane (pochodzą
