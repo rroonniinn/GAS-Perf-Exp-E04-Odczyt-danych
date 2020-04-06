@@ -72,7 +72,7 @@ const getFromSheet = (geo, ver) => target =>
  * @param {ExperimentSheet} target Np. target1 czy target2
  * @returns {function}
  */
-const getCache = target =>
+const getCache = () => target =>
 	pipe(
 		() => crusherCache.get(target.size),
 		printInfo('cache', target.printName)
