@@ -2,70 +2,86 @@
 import { performanceCheckerObj } from '../../../GAS | Library/v01/utils/performanceCheckerObj';
 import { paste } from '../../../GAS | Library/v02/gas/paste';
 import { getSheet } from '../../../GAS | Library/v02/gas/getSheet';
-import { pipe } from '../../../GAS | Library/v02/fp/pipe';
 
-import { SHORT_DSC, LONG_DESC, WHERE_TO_PRINT } from './config';
-
-/* ***************** Helpers ******************* */
+import { EXP_TITLE, EXP_METHOD, PRINT_TO, HUB } from './config';
 
 /**
- * @type {array[]} Docelowa tablica na dane z czasami wykonywania funkcji
- */
-const loggerRes = [];
-
-/**
- * Template rodzaju testu
- * @param {string} jobType
- * @returns {(callback: function, identifier: string, task: string) => any}
- */
-const run = jobType => (callback, identifier, task) => () =>
-	performanceCheckerObj(loggerRes, callback, identifier, task, jobType);
-
-const runJbJ = run('Job By Job');
-const runTbT = run('Task By Task');
-
-/**
- * Wkleja tablicę z czasami do wskazanego arkusza
- * @param {string} sheet
+ * @typedef {import('./config').ExperimentSheet} ExperimentSheet
+ * @typedef {import('./tasks').ExperimentTasks} ExperimentTasks
  */
 
-const printTimes = sheet => () =>
-	paste(getSheet(sheet), 'A', loggerRes, {
-		notRemoveFilers: true,
-		restrictCleanup: 'preserve',
-	});
+// /**
+//  * Wkleja tablicę z czasami do wskazanego arkusza
+//  * @param {string} sheet
+//  * @param {string} [id]
+//  */
 
-/**
- * Odpala wskazaną liczbę razy przekazaną funkcję (callback) wklejając
- * wyniki (czasy wykonania) do wskazanego arkusza
- *
- * @param {number} quant Liczba wykonań testu
- * @param {function} callback Funkcja do wykonania
- * @param {function} testTypeCallback Funkcja z konkretnym rodzajem eksperymentu (jbj|tbt)
- * @param {string} desc Opis co robi funkcja (np. 'Wklejenie danych (cache)') pojawi się w tabeli jako opis zadania
- * @param {string} resSheet Nazwa arkusza do którego mają być wklejone wyniki (czasy)
- * @returns {function} Zwraca funkcję gotową do odpalenia
- */
-
-const fire = (quant, callback, testTypeCallback, desc, resSheet) =>
-	pipe(testTypeCallback(quant, callback, desc), printTimes(resSheet));
+// const printTimes = (sheet, id) => () =>
+// 	paste(getSheet(sheet, id), 'A', loggerRes, {
+// 		notRemoveFilers: true,
+// 		restrictCleanup: 'preserve',
+// 	});
 
 /**
  * Podstawowa funkcja "single". Wykonuje się i zapisuje czas w pliku
  *
- * @param {string} taskCode Kod zadania - np l100
- * @param {function} callback Testowana funkcja
+ * @param {ExperimentSheet} target Obiekt z danymi na temat arkusza testowego
+ * @param {ExperimentTasks} task
  */
 
-const single = (taskCode, callback) => {
+const single = (target, task) => {
+	/**
+	 * @type {array[]} Docelowa tablica na dane z czasami wykonywania funkcji
+	 */
+	const loggerRes = [];
+
 	performanceCheckerObj(
 		loggerRes,
-		callback(taskCode),
-		SHORT_DSC[taskCode],
-		LONG_DESC[callback.name],
-		'Single Random'
+		task.callback(target),
+		target.printName,
+		task.desc,
+		EXP_METHOD
 	);
-	printTimes(WHERE_TO_PRINT[callback.name])();
+
+	// printTimes(task.sheet, WHERE_TO_PRINT[task.geo])();
+
+	paste(getSheet(task.sheet, PRINT_TO[task.printTo]), 'A', loggerRes, {
+		notRemoveFilers: true,
+		restrictCleanup: 'preserve',
+	});
 };
 
-export { runJbJ, runTbT, fire, single };
+/**
+ * Zwraca odpowieni arkusz do modyfikacji na podstawie parametru 'geo'
+ * określającego czy ma być to external, local czy hub
+ *
+ * @param {string} geo Określenie 'ext', 'loc', 'hub'
+ * @param {ExperimentSheet} target Numer celu arkusza np. target1
+ * @returns {GoogleAppsScript.Spreadsheet.Sheet} Obiket arkusza
+ */
+
+const getProperSheet = (geo, target) => {
+	if (geo === 'loc') return getSheet(target.sheetLocal);
+	if (geo === 'hub') return getSheet(target.sheetHub, HUB);
+	if (geo === 'ext')
+		return getSheet(target.sheetExternal, target.externalUrl);
+};
+
+/**
+ * Generator obiektu dla funkcji / zadania
+ *
+ * @param {string} printTo Do którego pliku ma wklejać dane. Musi odpowiadać obiektowi PRINT_TO z configu
+ * @param {function} callback Skurowana funkcja do wykonania
+ * @param {array} args Tablica argumentów dla callbacku
+ * @param {string} name Nazwa arkusza do którego mają być wklejone dane oraz nazwa zadania do opisu
+ * @returns {ExperimentTasks}
+ */
+
+const buildTask = (printTo, callback, args, name) => ({
+	printTo,
+	sheet: name,
+	callback: callback(...args),
+	desc: `${EXP_TITLE} : ${name} : ${printTo.toUpperCase()}`,
+});
+
+export { single, getProperSheet, buildTask };

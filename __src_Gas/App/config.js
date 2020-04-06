@@ -1,122 +1,165 @@
+/* eslint-disable max-lines */
+
+import { isEmpty } from '../../../GAS | Library/v02/gas/isEmpty';
+
 /**
- * Times Sheets
- * @typedef {Object} TimesSheets
- * @property {string} LOCAL Wklejka lokalna
- * @property {string} EXTER Wklejka do zewnętrznych plików
- * @property {string} HUB Wklejka do huba
- * @property {string} CACHE Wklejka do cacha
+ * @typedef {import('./types').ExperimentSheet} ExperimentSheet
  */
+
+const EXP_TITLE = 'Odczyt : Całość';
+const EXP_METHOD = 'Single Random';
+
 /**
- * @type {TimesSheets} SHEETS Arkusze do wklejania wyników eksperymentów
+ * Długość arkuszy biorących udział w eksperymencie
+ * @type {Object<string, object>}
  */
-const SHEETS = {
-	LOCAL: 'T: Odczyt lokalnie',
-	EXTER: 'T: Odczyt external',
-	HUB: 'T: Odczyt hub',
-	CACHE: 'T: Odczyt cache',
+
+const SAMPLES = {
+	s1: {
+		size: 100,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1DAsts1B-JuYZUNoQ5oNthmty6LsljPbik5zBZUOjkxg',
+	},
+	s2: {
+		size: 200,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1YxrLrGK-qRM67D6RgBb03Ozvd7ZtNuahwLXlV18QMsw',
+	},
+	s3: {
+		size: 500,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1XZEMpV-BX0X_vRoXwDQE2Fx3Lfug1_cCbssFAN7D-nM',
+	},
+	s4: {
+		size: 1000,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1weGq34nlv0Tto-pjnIFLPG6yX_XX5XS91hFxcyUU3Ak',
+	},
+	s5: {
+		size: 2000,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/14lGCP6Fp3UBnJpTl87-S14neBaE3r3ppZddxN1uSQj8',
+	},
+	s6: {
+		size: 4000,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1GXWLCEPXQOIGYhzrdxpuYk9VfNLyFMQFxgHoGYJYqTQ',
+	},
+	s7: {
+		size: 8000,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1yWJPLliF0CDPpS5QqEQJgkjvoUDy784g3UuAfd-vNIo',
+	},
+	s8: {
+		size: 16000,
+		externalUrl:
+			'https://docs.google.com/spreadsheets/d/1_bjTKNKUP_AvAkxmi92peD2t9cdMrsRatprzVvUlIXg',
+	},
 };
 
 /**
- * Arkusze lokalne z których pobieramy dane podczas eksperymentu
- * @type {Object<string, string>} LOCAL_SHEET
+ * Arkusze testowe - na nich operują eksperymenty, więc nazywamy je celami
+ * @type {Object<string, ExperimentSheet>} TARGET_SHEETS Dane arkuszy testowych
  */
-const LOCAL_SHEET = {
-	l100: 'res100',
-	l200: 'res200',
-	l500: 'res500',
-	l1000: 'res1000',
-	l2000: 'res2000',
-	l4000: 'res4000',
-	l8000: 'res8000',
-	l16000: 'res16000',
+
+const TARGET_SHEETS = {
+	target1: {
+		status: !isEmpty(SAMPLES.s1),
+		printName: `Arr 1: ${SAMPLES.s1.size}`,
+		size: SAMPLES.s1.size,
+		sheetLocal: `${SAMPLES.s1.size}`,
+		sheetHub: `${SAMPLES.s1.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s1.externalUrl}`,
+	},
+	target2: {
+		status: !isEmpty(SAMPLES.s2),
+		printName: `Arr 1: ${SAMPLES.s2.size}`,
+		size: SAMPLES.s2.size,
+		sheetLocal: `${SAMPLES.s2.size}`,
+		sheetHub: `${SAMPLES.s2.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s2.externalUrl}`,
+	},
+	target3: {
+		status: !isEmpty(SAMPLES.s3),
+		printName: `Arr 1: ${SAMPLES.s3.size}`,
+		size: SAMPLES.s3.size,
+		sheetLocal: `${SAMPLES.s3.size}`,
+		sheetHub: `${SAMPLES.s3.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s3.externalUrl}`,
+	},
+	target4: {
+		status: !isEmpty(SAMPLES.s4),
+		printName: `Arr 1: ${SAMPLES.s4.size}`,
+		size: SAMPLES.s4.size,
+		sheetLocal: `${SAMPLES.s4.size}`,
+		sheetHub: `${SAMPLES.s4.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s4.externalUrl}`,
+	},
+	target5: {
+		status: !isEmpty(SAMPLES.s5),
+		printName: `Arr 1: ${SAMPLES.s5.size}`,
+		size: SAMPLES.s5.size,
+		sheetLocal: `${SAMPLES.s5.size}`,
+		sheetHub: `${SAMPLES.s5.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s5.externalUrl}`,
+	},
+	target6: {
+		status: !isEmpty(SAMPLES.s6),
+		printName: `Arr 1: ${SAMPLES.s6.size}`,
+		size: SAMPLES.s6.size,
+		sheetLocal: `${SAMPLES.s6.size}`,
+		sheetHub: `${SAMPLES.s6.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s6.externalUrl}`,
+	},
+	target7: {
+		status: !isEmpty(SAMPLES.s7),
+		printName: `Arr 1: ${SAMPLES.s7.size}`,
+		size: SAMPLES.s7.size,
+		sheetLocal: `${SAMPLES.s7.size}`,
+		sheetHub: `${SAMPLES.s7.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s7.externalUrl}`,
+	},
+	target8: {
+		status: !isEmpty(SAMPLES.s8),
+		printName: `Arr 1: ${SAMPLES.s8.size}`,
+		size: SAMPLES.s8.size,
+		sheetLocal: `${SAMPLES.s8.size}`,
+		sheetHub: `${SAMPLES.s8.size}`,
+		sheetExternal: 'Data',
+		externalUrl: `${SAMPLES.s8.externalUrl}`,
+	},
 };
 
+/* *********************** PLIKI Z DANYMI ******************* */
+
 /**
- * URL zewnętrznego pliku - HUBa, w którym znajdują się indywidualne arkusze z danymi
- * @type {string} EXT_SHEET_NAME
+ * URLe z danymi dla Huba
+ * @type {string} HUB_URL
  */
 
-const EXT_SHEET_HUB_URL =
+const HUB =
 	'https://docs.google.com/spreadsheets/d/1N6GoUJWaSUTn1PSU1SqacMK9Ukj5p5342oeQY9wROO4';
 
 /**
- * URLe zewnętrznych arkuszy z których pobieramy dane (pochodzą
- * z eksperymentu https://docs.google.com/spreadsheets/d/1qV5DkLLS2XcZC2Oc3QsikbOtsA41N2PNBKyZghWbytY/edit#gid=1946600950)
- * @type {Object<string, string>} EXT_SHEET_URL
- */
-const EXT_SHEET_URL = {
-	l100:
-		'https://docs.google.com/spreadsheets/d/1DAsts1B-JuYZUNoQ5oNthmty6LsljPbik5zBZUOjkxg',
-	l200:
-		'https://docs.google.com/spreadsheets/d/1YxrLrGK-qRM67D6RgBb03Ozvd7ZtNuahwLXlV18QMsw',
-	l500:
-		'https://docs.google.com/spreadsheets/d/1XZEMpV-BX0X_vRoXwDQE2Fx3Lfug1_cCbssFAN7D-nM',
-	l1000:
-		'https://docs.google.com/spreadsheets/d/1weGq34nlv0Tto-pjnIFLPG6yX_XX5XS91hFxcyUU3Ak',
-	l2000:
-		'https://docs.google.com/spreadsheets/d/14lGCP6Fp3UBnJpTl87-S14neBaE3r3ppZddxN1uSQj8',
-	l4000:
-		'https://docs.google.com/spreadsheets/d/1GXWLCEPXQOIGYhzrdxpuYk9VfNLyFMQFxgHoGYJYqTQ',
-	l8000:
-		'https://docs.google.com/spreadsheets/d/1yWJPLliF0CDPpS5QqEQJgkjvoUDy784g3UuAfd-vNIo',
-	l16000:
-		'https://docs.google.com/spreadsheets/d/1_bjTKNKUP_AvAkxmi92peD2t9cdMrsRatprzVvUlIXg',
-};
-
-/**
- * Nazwa arkusza w zewnętrznym pliku, w którym znajdują się dane
- * @type {string} EXT_SHEET_NAME
+ * @type {Object<string, string>} obj
  */
 
-const EXT_SHEET_NAME = 'res';
-
-/**
- * Opis zadania wykorzysytwany w singlu
- * @type {Object<string, string>}
- */
-
-const SHORT_DSC = {
-	l100: 'Arr 1: 100',
-	l200: 'Arr 2: 200',
-	l500: 'Arr 3: 500',
-	l1000: 'Arr 4: 1000',
-	l2000: 'Arr 5: 2000',
-	l4000: 'Arr 6: 4000',
-	l8000: 'Arr 7: 8000',
-	l16000: 'Arr 8: 16000',
+const PRINT_TO = {
+	loc:
+		'https://docs.google.com/spreadsheets/d/1B_b7teyVoy6GEU2_ryGJClzZx2wZPw7IR8JvgtaFWYw/edit#gid=1328566787',
+	hub:
+		'https://docs.google.com/spreadsheets/d/1FyP335RxNUrtvEFxccNtUwN3LcuEh-2xj_wjB-knpY4/edit#gid=353722748',
+	ext:
+		'https://docs.google.com/spreadsheets/d/1dgcMuNFmn4Hdu2g395SdfpXc-8paJHwtQ0rs6i9lr5E/edit#gid=420631497',
+	cache:
+		'https://docs.google.com/spreadsheets/d/1wI2EmMLnHk6AHy5fVA7sNLhROTW1C4PrJcxwv_w5xBM/edit#gid=783264420',
 };
 
-/**
- * Dłuższy opis wykorzystywany w singlu
- * @type {Object<string, string>}
- */
-
-const LONG_DESC = {
-	getLocal: 'Odczyt danych (local)',
-	getExternal: 'Odczyt danych (external)',
-	getHub: 'Odczyt danych (hub)',
-	getCache: 'Odczyt danych (cache)',
-};
-
-/**
- * Gdzie wkleić wyniki ekspetymentów
- * @type {Object<string, string>}
- */
-
-const WHERE_TO_PRINT = {
-	getLocal: SHEETS.LOCAL,
-	getExternal: SHEETS.EXTER,
-	getHub: SHEETS.HUB,
-	getCache: SHEETS.CACHE,
-};
-
-export {
-	SHEETS,
-	LOCAL_SHEET,
-	EXT_SHEET_URL,
-	EXT_SHEET_NAME,
-	SHORT_DSC,
-	EXT_SHEET_HUB_URL,
-	LONG_DESC,
-	WHERE_TO_PRINT,
-};
+export { PRINT_TO, HUB, TARGET_SHEETS, EXP_TITLE, EXP_METHOD };

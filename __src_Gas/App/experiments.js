@@ -1,89 +1,47 @@
-/* eslint-disable max-params */
-import { looper } from '../../../GAS | Library/v01/utils/looper';
-import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
+// /* eslint-disable max-params */
 
-import { SHEETS } from './config';
-import { runJbJ, runTbT, fire, single } from './helpers';
-import { getLocal, getExternal, getCache, getHub } from './tasks';
+// import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
 
-/* ***************** Strukrura testów ******************* */
+// import { single } from './helpers';
+// import { tasks } from './tasks';
+// import { TARGET_SHEETS } from './config';
 
-/**
- * Odpalenie 'times' razy każdego zadania i przejście do następnego
- * @param {number} times
- * @param {function} callback Którą funkcję mam zastosowac
- * @param {string} desc Opis np. Wklejenie danych (external)
- */
+// /**
+//  * @typedef {import('./tasks').ExperimentTasks} ExperimentTasks
+//  */
 
-const jbj = (times, callback, desc) => () => {
-	looper(times, runJbJ(callback('l100'), 'Arr 1: 100', desc));
-	looper(times, runJbJ(callback('l200'), 'Arr 2: 200', desc));
-	looper(times, runJbJ(callback('l500'), 'Arr 3: 500', desc));
-	looper(times, runJbJ(callback('l1000'), 'Arr 4: 1000', desc));
-	looper(times, runJbJ(callback('l2000'), 'Arr 5: 2000', desc));
-	looper(times, runJbJ(callback('l4000'), 'Arr 6: 4000', desc));
-	looper(times, runJbJ(callback('l8000'), 'Arr 7: 8000', desc));
-	looper(times, runJbJ(callback('l16000'), 'Arr 8: 16000', desc));
-};
+// /* ******************** TESTY POJEDYŃCZE *********** */
 
-/**
- * Odpalenie 'times' razy sekwencji składającej się ze wszystkich zadań
- * @param {number} times
- * @param {function} callback
- * @param {string} desc Opis np. Wklejenie danych (external)
- */
+// /**
+//  * Tablica docelowych arkuszy (tylko zawierających dane)
+//  * @type {array[]} getTargets
+//  */
 
-const tbt = (times, callback, desc) => () => {
-	looper(times, () => {
-		runTbT(callback('l100'), 'Arr 1: 100', desc)();
-		runTbT(callback('l200'), 'Arr 2: 200', desc)();
-		runTbT(callback('l500'), 'Arr 3: 500', desc)();
-		runTbT(callback('l1000'), 'Arr 4: 1000', desc)();
-		runTbT(callback('l2000'), 'Arr 5: 2000', desc)();
-		runTbT(callback('l4000'), 'Arr 6: 4000', desc)();
-		runTbT(callback('l8000'), 'Arr 7: 8000', desc)();
-		runTbT(callback('l16000'), 'Arr 8: 16000', desc)();
-	});
-};
+// const getTargets = Object.entries(TARGET_SHEETS).filter(
+// 	([, { status }]) => status
+// );
 
-const DESC = 'Odczyt danych ';
+// // Sety funkcji do losowania
+// const randomFnLoc = [tasks.l1, tasks.l2, tasks.l3];
+// const randomFnHub = [tasks.h1, tasks.h2, tasks.h3];
+// const randomFnExt = [tasks.e1, tasks.e2, tasks.e3];
+// const randomFnCache = [tasks.c1];
 
-/**
- * Obiekt ze wszystkimi callbackami do eksperymetów
- */
-const exps = {
-	/* LOCAL */
-	localJbJ: fire(30, getLocal, jbj, `${DESC}(local)`, SHEETS.LOCAL),
-	localTbT: fire(30, getLocal, tbt, `${DESC}(local)`, SHEETS.LOCAL),
+// /**
+//  * Template losowego wyboru funkcji do wykonania
+//  * @param {ExperimentTasks[]} functionsSet
+//  */
 
-	/* EXTERNAL */
-	extJbJ: fire(30, getExternal, jbj, `${DESC}(external)`, SHEETS.EXTER),
-	extTbT: fire(30, getExternal, tbt, `${DESC}(external)`, SHEETS.EXTER),
+// const runRandom = functionsSet => () => {
+// 	const [, target] = randomFromArray(getTargets, 1);
+// 	const [task] = randomFromArray(functionsSet, 1);
 
-	/* CACHE */
-	cacheJbJ: fire(50, getCache, jbj, `${DESC}(cache)`, SHEETS.CACHE),
-	cacheTbT: fire(50, getCache, tbt, `${DESC}(cache)`, SHEETS.CACHE),
-};
+// 	single(target, task);
+// };
 
-/* ******************** TESTY POJEDYŃCZE *********** */
-const randomCode = [
-	'l100',
-	'l200',
-	'l500',
-	'l1000',
-	'l2000',
-	'l4000',
-	'l8000',
-	'l16000',
-];
-const randomFn = [getLocal, getExternal, getCache, getHub];
+// const randomExternal = runRandom(randomFnExt);
+// const randomLocal = runRandom(randomFnLoc);
+// const randomHub = runRandom(randomFnHub);
+// const randomCache = runRandom(randomFnCache);
 
-const runRandomSingle = () => {
-	const [code] = randomFromArray(randomCode, 1);
-	const [fn] = randomFromArray(randomFn, 1);
-	console.log(`Arkusz: ${code} | Fn: ${fn.name}`);
-
-	single(code, fn);
-};
-
-export { exps, runRandomSingle };
+// export { randomExternal, randomLocal, randomHub, randomCache };

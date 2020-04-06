@@ -1,16 +1,16 @@
+/* eslint-disable max-params */
 import { randomIntegersArray2d } from '../../../GAS | Library/v02/arr/randomIntegersArray2d';
-import { getSheet } from '../../../GAS | Library/v02/gas/getSheet';
 import { getValues } from '../../../GAS | Library/v01/gas/getValues';
-import { getIdFromUrl } from '../../../GAS | Library/v02/gas/getIdFromUrl';
 import { crusherCache } from '../../../GAS | Library/v02/cache/crusherCache';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
+import { getProperSheet, buildTask, single } from './helpers';
+import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
+import { TARGET_SHEETS } from './config';
 
-import {
-	LOCAL_SHEET,
-	EXT_SHEET_URL,
-	EXT_SHEET_NAME,
-	EXT_SHEET_HUB_URL,
-} from './config';
+/**
+ * @typedef {import('./types').ExperimentSheet} ExperimentSheet
+ * @typedef {import('./types').ExperimentTasks} ExperimentTasks
+ */
 
 /**
  * Obiekt z funkcjami generującymi losowe tablice z numerami od 0 do 1000
@@ -19,78 +19,64 @@ import {
  */
 
 const generateData = {
-	l100: () => randomIntegersArray2d(100, 15),
-	l200: () => randomIntegersArray2d(200, 15),
-	l500: () => randomIntegersArray2d(500, 15),
-	l1000: () => randomIntegersArray2d(1000, 15),
-	l2000: () => randomIntegersArray2d(2000, 15),
-	l4000: () => randomIntegersArray2d(4000, 15),
-	l8000: () => randomIntegersArray2d(8000, 15),
-	l16000: () => randomIntegersArray2d(16000, 15),
+	s1: () => randomIntegersArray2d(100, 15),
+	s2: () => randomIntegersArray2d(200, 15),
+	s3: () => randomIntegersArray2d(500, 15),
+	s4: () => randomIntegersArray2d(1000, 15),
+	s5: () => randomIntegersArray2d(2000, 15),
+	s6: () => randomIntegersArray2d(4000, 15),
+	s7: () => randomIntegersArray2d(8000, 15),
+	s8: () => randomIntegersArray2d(16000, 15),
 };
 
 /**
  * Helper
  * Wpisuje w konsoli status działania
  *
- * @param {string} src Źródło np. external
- * @param {string} taskCode Kod zadania (wypełnia się automatycznie)
+ * @param {string} geo Źródło np. external
+ * @param {string} desc Opis z którego arkusza wzięte dane
  * @returns {(val: array[]) => void}
  */
-const printInfo = (src, taskCode) => val =>
-	console.log(`Got from ${src} '${taskCode}' | ${val.length} rows`);
+const printInfo = (geo, desc) => val =>
+	console.log(`Got from ${geo} '${desc}' | ${val.length} rows`);
 
 /**
- * Pobiera dane z lokalnego arkusza
- * @param {string} taskCode Zdefiniowany kod zadania np. l100
- * @returns {function}
+ *
+ * @param {null|'short'|'full'} [ver] Sposób wyliczenia zakresu.
+ * null - używa data range, short A1:O, full A1:O1000
+ * @param {number} size Wielkość arkusza danych
+ * @returns
  */
-const getLocal = taskCode =>
-	pipe(
-		() => getSheet(LOCAL_SHEET[taskCode]),
-		getValues,
-		printInfo('local', taskCode)
-	);
+
+const getRange = (ver, size) => {
+	if (!ver) return null;
+	if (ver === 'short') return 'A1:O';
+	if (ver === 'full') return `A1:O${size}`;
+};
 
 /**
- * Pobiera dane z indywidualnych zewnętrznych arkuszy
- * @param {string} taskCode Zdefiniowany kod zadania np. l100
- * @returns {function}
+ * Pobiera dane ze wskazanego źródła ze wskazanego arkusza
+ * @param {'ext'|'loc'|'hub'} geo Strukura danych do pobrania
+ * @param {null|'short'|'full'} [ver] Wersja zakresu. null - używa data; range, short A1:O, full A1:O1000
+ * @return {(target: ExperimentSheet) => function} target Np. target1 czy target2
  */
-const getExternal = taskCode =>
+const getFromSheet = (geo, ver) => target =>
 	pipe(
-		() =>
-			getSheet(
-				EXT_SHEET_NAME,
-				getIdFromUrl(EXT_SHEET_URL[taskCode])
-			),
-		getValues,
-		printInfo('external', taskCode)
-	);
-
-/**
- * Pobiera dane z indywidualnych arkuszy w jednym zewnętrznym HUBie
- * @param {string} taskCode Zdefiniowany kod zadania np. l100
- * @returns {function}
- */
-const getHub = taskCode =>
-	pipe(
-		() =>
-			getSheet(
-				LOCAL_SHEET[taskCode],
-				getIdFromUrl(EXT_SHEET_HUB_URL)
-			),
-		getValues,
-		printInfo('hub', taskCode)
+		() => getProperSheet(geo, target),
+		sheet => getValues(sheet, getRange(ver, target.size)),
+		printInfo(geo, target.printName)
 	);
 
 /**
  * Pobierz dane z cacha
- * @param {string} taskCode Zdefiniowany kod zadania np. l100
+ * @param {ExperimentSheet} target Np. target1 czy target2
  * @returns {function}
  */
-const getCache = taskCode =>
-	pipe(() => crusherCache.get(taskCode), printInfo('cache', taskCode));
+const getCache = target =>
+	pipe(
+		() => crusherCache.get(target.size),
+		printInfo('cache', target.printName)
+	);
 
 /**
  * Helper:
@@ -106,4 +92,68 @@ const regenerateCache = () => {
 	});
 };
 
-export { getLocal, getExternal, getCache, regenerateCache, getHub };
+/**
+ * Obiekt z zadaniami / eksperymentami do wykonania
+ * @type {ExperimentTasks[]}
+ */
+
+// Sety funkcji do losowania
+const randomFnLoc = [
+	buildTask('loc', getFromSheet, ['loc', null], 'DataRange Test'),
+	buildTask('loc', getFromSheet, ['loc', 'short'], 'Short Test'),
+	buildTask('loc', getFromSheet, ['loc', 'full'], 'Full Test'),
+];
+
+const randomFnHub = [
+	buildTask('hub', getFromSheet, ['hub', null], 'DataRange'),
+	buildTask('hub', getFromSheet, ['hub', 'short'], 'Short'),
+	buildTask('hub', getFromSheet, ['hub', 'full'], 'Full'),
+];
+
+const randomFnExt = [
+	buildTask('ext', getFromSheet, ['ext', null], 'DataRange'),
+	buildTask('ext', getFromSheet, ['ext', 'short'], 'Short'),
+	buildTask('ext', getFromSheet, ['ext', 'full'], 'Full'),
+];
+
+const randomFnCache = [buildTask('cache', getCache, [], 'Full')];
+
+/**
+ * Template losowego wyboru funkcji do wykonania
+ * @param {ExperimentTasks[]} functionsSet
+ */
+
+const runRandom = functionsSet => () => {
+	/**
+	 * Tablica docelowych arkuszy (tylko zawierających dane)
+	 * @type {array[]} getTargets
+	 */
+
+	const getTargets = Object.entries(TARGET_SHEETS).filter(
+		([, { status }]) => status
+	);
+
+	const [[, target]] = randomFromArray(getTargets, 1);
+	const [task] = randomFromArray(functionsSet, 1);
+
+	console.log(getTargets, getTargets);
+	console.log('target', target);
+	console.log('task', task);
+
+	// single(target, task);
+};
+
+const randomExternal = runRandom(randomFnExt);
+const randomLocal = runRandom(randomFnLoc);
+const randomHub = runRandom(randomFnHub);
+const randomCache = runRandom(randomFnCache);
+
+export {
+	regenerateCache,
+	randomExternal,
+	randomLocal,
+	randomHub,
+	randomCache,
+};
+
+// export { regenerateCache, tasks };
