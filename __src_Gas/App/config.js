@@ -1,165 +1,214 @@
 /* eslint-disable max-lines */
-
-import { isEmpty } from '../../../GAS | Library/v02/gas/isEmpty';
-
 /**
- * @typedef {import('./types').ExperimentSheet} ExperimentSheet
+ * @typedef {import('./types').ExpSheet} ExpSheet
+ * @typedef {import('./types').ExpSetup} ExpSetup
  */
 
-const EXP_TITLE = 'Odczyt : Całość';
-const EXP_METHOD = 'Single Random';
+import { getProp } from '../../../GAS | Library/v01/gas/properties';
+
+/* ******************************************************************** */
+/* 										SEKCJA EDYTOWALNA
+/* ******************************************************************** */
 
 /**
- * Długość arkuszy biorących udział w eksperymencie
- * @type {Object<string, object>}
+ * Ustawienie całego eksperymentu
+ * @type {ExpSetup} EXP_SETUP
  */
 
-const SAMPLES = {
-	s1: {
-		size: 100,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1DAsts1B-JuYZUNoQ5oNthmty6LsljPbik5zBZUOjkxg',
+const EXP_SETUP = {
+	title: 'Odczyt : Całość',
+	method: 'Single Random',
+	structure: {
+		fixed: 'col',
+		fixedSize: 15,
+		randomData: true,
 	},
-	s2: {
-		size: 200,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1YxrLrGK-qRM67D6RgBb03Ozvd7ZtNuahwLXlV18QMsw',
+	samples: {
+		s1: 100,
+		s2: 200,
+		s3: 500,
+		s4: 1000,
+		s5: 2000,
+		s6: 4000,
+		s7: 8000,
+		s8: 16000,
 	},
-	s3: {
-		size: 500,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1XZEMpV-BX0X_vRoXwDQE2Fx3Lfug1_cCbssFAN7D-nM',
-	},
-	s4: {
-		size: 1000,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1weGq34nlv0Tto-pjnIFLPG6yX_XX5XS91hFxcyUU3Ak',
-	},
-	s5: {
-		size: 2000,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/14lGCP6Fp3UBnJpTl87-S14neBaE3r3ppZddxN1uSQj8',
-	},
-	s6: {
-		size: 4000,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1GXWLCEPXQOIGYhzrdxpuYk9VfNLyFMQFxgHoGYJYqTQ',
-	},
-	s7: {
-		size: 8000,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1yWJPLliF0CDPpS5QqEQJgkjvoUDy784g3UuAfd-vNIo',
-	},
-	s8: {
-		size: 16000,
-		externalUrl:
-			'https://docs.google.com/spreadsheets/d/1_bjTKNKUP_AvAkxmi92peD2t9cdMrsRatprzVvUlIXg',
+	printTo: {
+		loc: {
+			prefix: 'A',
+			name: 'Local',
+			colorLight: '#34a853',
+			colorDark: '#1f8b3c',
+			sheetsMeaning: {
+				a: 'DataRange',
+				b: 'Full',
+				c: 'Short',
+				d: '',
+				e: '',
+				f: '',
+			},
+		},
+		hub: {
+			prefix: 'B',
+			name: 'Hub',
+			colorLight: '#34a853',
+			colorDark: '#1f8b3c',
+			sheetsMeaning: {
+				a: 'DataRange',
+				b: 'Full',
+				c: 'Short',
+				d: '',
+				e: '',
+				f: '',
+			},
+		},
+		ext: {
+			prefix: 'C',
+			name: 'External',
+			colorLight: '#34a853',
+			colorDark: '#1f8b3c',
+			sheetsMeaning: {
+				a: 'Całość',
+				b: 'Full',
+				c: 'Short',
+				d: '',
+				e: '',
+				f: '',
+			},
+		},
+		cache: {
+			prefix: 'D',
+			name: 'Cache',
+			colorLight: '#34a853',
+			colorDark: '#1f8b3c',
+			sheetsMeaning: {
+				a: '1 min',
+				b: '15 min',
+				c: '30 min',
+				d: '1 h',
+				e: '',
+				f: '',
+			},
+		},
 	},
 };
 
+/* ******************************************************************** */
+/* 										SEKCJA NIE EDYTOWALNA
+/* ******************************************************************** */
+
+/**
+ * Template pliku, do którego wklejane są dane z wynikami eksperymentów
+ * @type {string} TEMPLATE_PRINT_TO
+ */
+const TEMPLATE_PRINT_TO =
+	'https://docs.google.com/spreadsheets/d/139mlb1yO8e_T8Bs25yX5kTiHaCvSNRuQf8RRyH2WpTg/edit#gid=1941260253';
+
+/**
+ * Nazwa arkusza z danymi w zewnętrznych plikach
+ * @type {string} EXTERNAL_SHEET
+ */
+const EXTERNAL_SHEET = 'Dane';
+
+/**
+ * Nazwa folderu z plikami z testowymi danymi
+ * @type {string} FILES_FOLDER
+ */
+const FILES_FOLDER = '_Pliki';
+
+/**
+ * Nazwa pliku z danymi do eksperymentów HUB
+ * @type {string} HUB_NAME
+ */
+const HUB_NAME = 'externalHub';
+
+/**
+ * Obiekt z ID zewnętrznych plików z danymi do eksperymentów Ext.
+ * Kluczami są s1, s2 itp. Ponieważ Apps Script sprawdza wszystko przed
+ * odpaleniem, w sytuacji gdy jeszcze nie ma struktury propsy są puste,
+ * aby nie wywalało błędu inicjuje je zatem pustym obiektem
+ * @type {Object<string, string>} EXTERNAL_URLS
+ */
+
+const EXTERNALS = getProp('script', 'EXTERNALS') || {};
+const { samples } = EXP_SETUP;
 /**
  * Arkusze testowe - na nich operują eksperymenty, więc nazywamy je celami
- * @type {Object<string, ExperimentSheet>} TARGET_SHEETS Dane arkuszy testowych
+ * @type {Object<string, ExpSheet>} TARGET_SHEETS Dane arkuszy testowych
  */
 
 const TARGET_SHEETS = {
 	target1: {
-		status: !isEmpty(SAMPLES.s1),
-		printName: `Arr 1: ${SAMPLES.s1.size}`,
-		size: SAMPLES.s1.size,
-		sheetLocal: `${SAMPLES.s1.size}`,
-		sheetHub: `${SAMPLES.s1.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s1.externalUrl}`,
+		status: !!samples.s1,
+		printName: `Arr 1: ${samples.s1}`,
+		size: samples.s1,
+		sheetLocal: String(samples.s1),
+		sheetHub: String(samples.s1),
+		externalId: EXTERNALS.s1,
 	},
 	target2: {
-		status: !isEmpty(SAMPLES.s2),
-		printName: `Arr 1: ${SAMPLES.s2.size}`,
-		size: SAMPLES.s2.size,
-		sheetLocal: `${SAMPLES.s2.size}`,
-		sheetHub: `${SAMPLES.s2.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s2.externalUrl}`,
+		status: !!samples.s2,
+		printName: `Arr 1: ${samples.s2}`,
+		size: samples.s2,
+		sheetLocal: String(samples.s2),
+		sheetHub: String(samples.s2),
+		externalId: EXTERNALS.s2,
 	},
 	target3: {
-		status: !isEmpty(SAMPLES.s3),
-		printName: `Arr 1: ${SAMPLES.s3.size}`,
-		size: SAMPLES.s3.size,
-		sheetLocal: `${SAMPLES.s3.size}`,
-		sheetHub: `${SAMPLES.s3.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s3.externalUrl}`,
+		status: !!samples.s3,
+		printName: `Arr 1: ${samples.s3}`,
+		size: samples.s3,
+		sheetLocal: String(samples.s3),
+		sheetHub: String(samples.s3),
+		externalId: EXTERNALS.s3,
 	},
 	target4: {
-		status: !isEmpty(SAMPLES.s4),
-		printName: `Arr 1: ${SAMPLES.s4.size}`,
-		size: SAMPLES.s4.size,
-		sheetLocal: `${SAMPLES.s4.size}`,
-		sheetHub: `${SAMPLES.s4.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s4.externalUrl}`,
+		status: !!samples.s4,
+		printName: `Arr 1: ${samples.s4}`,
+		size: samples.s4,
+		sheetLocal: String(samples.s4),
+		sheetHub: String(samples.s4),
+		externalId: EXTERNALS.s4,
 	},
 	target5: {
-		status: !isEmpty(SAMPLES.s5),
-		printName: `Arr 1: ${SAMPLES.s5.size}`,
-		size: SAMPLES.s5.size,
-		sheetLocal: `${SAMPLES.s5.size}`,
-		sheetHub: `${SAMPLES.s5.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s5.externalUrl}`,
+		status: !!samples.s5,
+		printName: `Arr 1: ${samples.s5}`,
+		size: samples.s5,
+		sheetLocal: String(samples.s5),
+		sheetHub: String(samples.s5),
+		externalId: EXTERNALS.s5,
 	},
 	target6: {
-		status: !isEmpty(SAMPLES.s6),
-		printName: `Arr 1: ${SAMPLES.s6.size}`,
-		size: SAMPLES.s6.size,
-		sheetLocal: `${SAMPLES.s6.size}`,
-		sheetHub: `${SAMPLES.s6.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s6.externalUrl}`,
+		status: !!samples.s6,
+		printName: `Arr 1: ${samples.s6}`,
+		size: samples.s6,
+		sheetLocal: String(samples.s6),
+		sheetHub: String(samples.s6),
+		externalId: EXTERNALS.s6,
 	},
 	target7: {
-		status: !isEmpty(SAMPLES.s7),
-		printName: `Arr 1: ${SAMPLES.s7.size}`,
-		size: SAMPLES.s7.size,
-		sheetLocal: `${SAMPLES.s7.size}`,
-		sheetHub: `${SAMPLES.s7.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s7.externalUrl}`,
+		status: !!samples.s7,
+		printName: `Arr 1: ${samples.s7}`,
+		size: samples.s7,
+		sheetLocal: String(samples.s7),
+		sheetHub: String(samples.s7),
+		externalId: EXTERNALS.s7,
 	},
 	target8: {
-		status: !isEmpty(SAMPLES.s8),
-		printName: `Arr 1: ${SAMPLES.s8.size}`,
-		size: SAMPLES.s8.size,
-		sheetLocal: `${SAMPLES.s8.size}`,
-		sheetHub: `${SAMPLES.s8.size}`,
-		sheetExternal: 'Data',
-		externalUrl: `${SAMPLES.s8.externalUrl}`,
+		status: !!samples.s8,
+		printName: `Arr 1: ${samples.s8}`,
+		size: samples.s8,
+		sheetLocal: String(samples.s8),
+		sheetHub: String(samples.s8),
+		externalId: EXTERNALS.s8,
 	},
 };
 
-/* *********************** PLIKI Z DANYMI ******************* */
-
-/**
- * URLe z danymi dla Huba
- * @type {string} HUB_URL
- */
-
-const HUB =
-	'https://docs.google.com/spreadsheets/d/1N6GoUJWaSUTn1PSU1SqacMK9Ukj5p5342oeQY9wROO4';
-
-/**
- * @type {Object<string, string>} obj
- */
-
-const PRINT_TO = {
-	loc:
-		'https://docs.google.com/spreadsheets/d/1B_b7teyVoy6GEU2_ryGJClzZx2wZPw7IR8JvgtaFWYw/edit#gid=1328566787',
-	hub:
-		'https://docs.google.com/spreadsheets/d/1FyP335RxNUrtvEFxccNtUwN3LcuEh-2xj_wjB-knpY4/edit#gid=353722748',
-	ext:
-		'https://docs.google.com/spreadsheets/d/1dgcMuNFmn4Hdu2g395SdfpXc-8paJHwtQ0rs6i9lr5E/edit#gid=420631497',
-	cache:
-		'https://docs.google.com/spreadsheets/d/1wI2EmMLnHk6AHy5fVA7sNLhROTW1C4PrJcxwv_w5xBM/edit#gid=783264420',
+export {
+	TARGET_SHEETS,
+	TEMPLATE_PRINT_TO,
+	EXTERNAL_SHEET,
+	EXP_SETUP,
+	FILES_FOLDER,
+	HUB_NAME,
 };
-
-export { PRINT_TO, HUB, TARGET_SHEETS, EXP_TITLE, EXP_METHOD };

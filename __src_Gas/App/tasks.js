@@ -1,33 +1,26 @@
 /* eslint-disable max-params */
+/**
+ * @typedef {import('./types').ExpSheet} ExpSheet
+ * @typedef {import('./types').ExpTasks} ExpTasks
+ */
+
 import { randomIntegersArray2d } from '../../../GAS | Library/v02/arr/randomIntegersArray2d';
 import { getValues } from '../../../GAS | Library/v01/gas/getValues';
 import { crusherCache } from '../../../GAS | Library/v02/cache/crusherCache';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
-import { getProperSheet, buildTask, single } from './helpers';
 import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
+
 import { TARGET_SHEETS } from './config';
+import { getProperSheet, buildTask, single } from './helpers';
 
 /**
- * @typedef {import('./types').ExperimentSheet} ExperimentSheet
- * @typedef {import('./types').ExperimentTasks} ExperimentTasks
+ * Tablica docelowych arkuszy (tylko zawierających dane)
+ * @type {[string, ExpSheet][]} targets Tablica docelowych wielkości arkuszy
  */
 
-/**
- * Obiekt z funkcjami generującymi losowe tablice z numerami od 0 do 1000
- * o różnej liczbie wierszy i 15 kolumnach
- * @type {Object<string, function>} generateRandomArrs
- */
-
-const generateData = {
-	s1: () => randomIntegersArray2d(100, 15),
-	s2: () => randomIntegersArray2d(200, 15),
-	s3: () => randomIntegersArray2d(500, 15),
-	s4: () => randomIntegersArray2d(1000, 15),
-	s5: () => randomIntegersArray2d(2000, 15),
-	s6: () => randomIntegersArray2d(4000, 15),
-	s7: () => randomIntegersArray2d(8000, 15),
-	s8: () => randomIntegersArray2d(16000, 15),
-};
+const targets = Object.entries(TARGET_SHEETS).filter(
+	([, { status }]) => status
+);
 
 /**
  * Helper
@@ -38,7 +31,7 @@ const generateData = {
  * @returns {(val: array[]) => void}
  */
 const printInfo = (geo, desc) => val =>
-	console.log(`Got from ${geo} '${desc}' | ${val.length} rows`);
+	console.log(`** Got from ${geo} '${desc}' | ${val.length} rows`);
 
 /**
  *
@@ -58,7 +51,7 @@ const getRange = (ver, size) => {
  * Pobiera dane ze wskazanego źródła ze wskazanego arkusza
  * @param {'ext'|'loc'|'hub'} geo Strukura danych do pobrania
  * @param {null|'short'|'full'} [ver] Wersja zakresu. null - używa data; range, short A1:O, full A1:O1000
- * @return {(target: ExperimentSheet) => function} target Np. target1 czy target2
+ * @return {(target: ExpSheet) => function} target Np. target1 czy target2
  */
 const getFromSheet = (geo, ver) => target =>
 	pipe(
@@ -69,12 +62,13 @@ const getFromSheet = (geo, ver) => target =>
 
 /**
  * Pobierz dane z cacha
- * @param {ExperimentSheet} target Np. target1 czy target2
- * @returns {function}
+ * @param {string} prefix Przedrostek odróżniający cache od siebie
+ * do testów 1, 15, 30 min i 1h
+ * @returns {(target: ExpSheet) => function} target Np. target1 czy target2
  */
-const getCache = () => target =>
+const getCache = prefix => target =>
 	pipe(
-		() => crusherCache.get(target.size),
+		() => crusherCache.get(`${prefix}${target.size}`),
 		printInfo('cache', target.printName)
 	);
 
@@ -83,77 +77,79 @@ const getCache = () => target =>
  * Regeneruj cache - wygeneruj losowe liczby i wklej je do cacha
  */
 const regenerateCache = () => {
-	Object.keys(generateData).forEach(key => {
-		const randomData = generateData[key]();
-		crusherCache.put(key, randomData, 360); // maxymalny czas cacha
+	targets.forEach(([, { size }]) => {
+		const data = randomIntegersArray2d(size, 15);
+		crusherCache.put(`va${size}`, data, 360); // maxymalny czas cacha
+		crusherCache.put(`vb${size}`, data, 360); // maxymalny czas cacha
+		crusherCache.put(`vc${size}`, data, 360); // maxymalny czas cacha
+		crusherCache.put(`vd${size}`, data, 360); // maxymalny czas cacha
+
 		console.log(
-			`Regenerated ${randomData.length} rows | First cell: ${randomData[0][0]}`
+			`Regenerated ${data.length} rows | First cell: ${data[0][0]}`
 		);
 	});
 };
 
 /**
- * Obiekt z zadaniami / eksperymentami do wykonania
- * @type {ExperimentTasks[]}
+ * Obiekt z zadaniami / eksperymentami do wykonania. Pierwszy argument
+ * musi się zgadzać z tabelą printTo w EXP_SETUP
+ * @type {ExpTasks[]}
  */
 
 // Sety funkcji do losowania
 const randomFnLoc = [
-	buildTask('loc', getFromSheet, ['loc', null], 'DataRange Test'),
-	buildTask('loc', getFromSheet, ['loc', 'short'], 'Short Test'),
-	buildTask('loc', getFromSheet, ['loc', 'full'], 'Full Test'),
+	buildTask('loc', getFromSheet, ['loc', null], 'a'),
+	buildTask('loc', getFromSheet, ['loc', 'short'], 'b'),
+	buildTask('loc', getFromSheet, ['loc', 'full'], 'c'),
 ];
 
 const randomFnHub = [
-	buildTask('hub', getFromSheet, ['hub', null], 'DataRange'),
-	buildTask('hub', getFromSheet, ['hub', 'short'], 'Short'),
-	buildTask('hub', getFromSheet, ['hub', 'full'], 'Full'),
+	buildTask('hub', getFromSheet, ['hub', null], 'a'),
+	buildTask('hub', getFromSheet, ['hub', 'short'], 'b'),
+	buildTask('hub', getFromSheet, ['hub', 'full'], 'c'),
 ];
 
 const randomFnExt = [
-	buildTask('ext', getFromSheet, ['ext', null], 'DataRange'),
-	buildTask('ext', getFromSheet, ['ext', 'short'], 'Short'),
-	buildTask('ext', getFromSheet, ['ext', 'full'], 'Full'),
+	buildTask('ext', getFromSheet, ['ext', null], 'a'),
+	buildTask('ext', getFromSheet, ['ext', 'short'], 'b'),
+	buildTask('ext', getFromSheet, ['ext', 'full'], 'c'),
 ];
 
-const randomFnCache = [buildTask('cache', getCache, [], 'Full')];
+// Przygotowanie zadań dla casha odpytywanego co 1, 15 i 30 min
+const randomFnCacheA = [buildTask('cache', getCache, ['va'], 'a')];
+const randomFnCacheB = [buildTask('cache', getCache, ['vb'], 'b')];
+const randomFnCacheC = [buildTask('cache', getCache, ['vc'], 'c')];
+const randomFnCacheD = [buildTask('cache', getCache, ['vd'], 'd')];
 
 /**
  * Template losowego wyboru funkcji do wykonania
- * @param {ExperimentTasks[]} functionsSet
+ * @param {ExpTasks[]} functionsSet
  */
 
 const runRandom = functionsSet => () => {
-	/**
-	 * Tablica docelowych arkuszy (tylko zawierających dane)
-	 * @type {array[]} getTargets
-	 */
-
-	const getTargets = Object.entries(TARGET_SHEETS).filter(
-		([, { status }]) => status
-	);
-
-	const [[, target]] = randomFromArray(getTargets, 1);
+	const [[, target]] = randomFromArray(targets, 1);
 	const [task] = randomFromArray(functionsSet, 1);
 
-	console.log(getTargets, getTargets);
-	console.log('target', target);
-	console.log('task', task);
-
-	// single(target, task);
+	single(target, task);
 };
 
 const randomExternal = runRandom(randomFnExt);
 const randomLocal = runRandom(randomFnLoc);
 const randomHub = runRandom(randomFnHub);
-const randomCache = runRandom(randomFnCache);
+const randomCacheA = runRandom(randomFnCacheA);
+const randomCacheB = runRandom(randomFnCacheB);
+const randomCacheC = runRandom(randomFnCacheC);
+const randomCacheD = runRandom(randomFnCacheD);
 
 export {
 	regenerateCache,
 	randomExternal,
 	randomLocal,
 	randomHub,
-	randomCache,
+	randomCacheA,
+	randomCacheB,
+	randomCacheC,
+	randomCacheD,
 };
 
 // export { regenerateCache, tasks };
