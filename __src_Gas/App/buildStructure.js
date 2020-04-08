@@ -18,6 +18,8 @@ import { deleteSheets } from '../../../GAS | Library/v01/gas/deleteSheets';
 import { createFolder } from '../../../GAS | Library/v01/gas/createFolder';
 import { getContainingFolder } from '../../../GAS | Library/v01/gas/getContainingFolder';
 import { createSpreadsheetIn } from '../../../GAS | Library/v02/gas/createSpreadsheetIn';
+import { pipe } from '../../../GAS | Library/v02/fp/pipe';
+import { seq } from '../../../GAS | Library/v01/fp/seq';
 
 import {
 	TEMPLATE_PRINT_TO,
@@ -26,8 +28,6 @@ import {
 	FILES_FOLDER,
 	HUB_NAME,
 } from './config';
-import { pipe } from '../../../GAS | Library/v02/fp/pipe';
-import { seq } from '../../../GAS | Library/v01/fp/seq';
 
 const { title, structure, samples, printTo } = EXP_SETUP;
 const { fixedSize, fixed, randomData } = structure;

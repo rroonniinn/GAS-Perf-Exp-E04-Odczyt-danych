@@ -148,7 +148,7 @@ const TARGET_SHEETS = {
 	},
 	target2: {
 		status: !!samples.s2,
-		printName: `Arr 1: ${samples.s2}`,
+		printName: `Arr 2: ${samples.s2}`,
 		size: samples.s2,
 		sheetLocal: String(samples.s2),
 		sheetHub: String(samples.s2),
@@ -156,7 +156,7 @@ const TARGET_SHEETS = {
 	},
 	target3: {
 		status: !!samples.s3,
-		printName: `Arr 1: ${samples.s3}`,
+		printName: `Arr 3: ${samples.s3}`,
 		size: samples.s3,
 		sheetLocal: String(samples.s3),
 		sheetHub: String(samples.s3),
@@ -164,7 +164,7 @@ const TARGET_SHEETS = {
 	},
 	target4: {
 		status: !!samples.s4,
-		printName: `Arr 1: ${samples.s4}`,
+		printName: `Arr 4: ${samples.s4}`,
 		size: samples.s4,
 		sheetLocal: String(samples.s4),
 		sheetHub: String(samples.s4),
@@ -172,7 +172,7 @@ const TARGET_SHEETS = {
 	},
 	target5: {
 		status: !!samples.s5,
-		printName: `Arr 1: ${samples.s5}`,
+		printName: `Arr 5: ${samples.s5}`,
 		size: samples.s5,
 		sheetLocal: String(samples.s5),
 		sheetHub: String(samples.s5),
@@ -180,7 +180,7 @@ const TARGET_SHEETS = {
 	},
 	target6: {
 		status: !!samples.s6,
-		printName: `Arr 1: ${samples.s6}`,
+		printName: `Arr 6: ${samples.s6}`,
 		size: samples.s6,
 		sheetLocal: String(samples.s6),
 		sheetHub: String(samples.s6),
@@ -188,7 +188,7 @@ const TARGET_SHEETS = {
 	},
 	target7: {
 		status: !!samples.s7,
-		printName: `Arr 1: ${samples.s7}`,
+		printName: `Arr 7: ${samples.s7}`,
 		size: samples.s7,
 		sheetLocal: String(samples.s7),
 		sheetHub: String(samples.s7),
@@ -196,7 +196,7 @@ const TARGET_SHEETS = {
 	},
 	target8: {
 		status: !!samples.s8,
-		printName: `Arr 1: ${samples.s8}`,
+		printName: `Arr 8: ${samples.s8}`,
 		size: samples.s8,
 		sheetLocal: String(samples.s8),
 		sheetHub: String(samples.s8),
