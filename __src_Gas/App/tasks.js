@@ -10,17 +10,16 @@ import { crusherCache } from '../../../GAS | Library/v02/cache/crusherCache';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
 import { randomFromArray } from '../../../GAS | Library/v02/arr/randomFromArray';
 
-import { TARGET_SHEETS } from './config';
-import { getProperSheet, buildTask, single } from './helpers';
+import { getProperSheet, buildTask, single, TARGETS } from './helpers';
 
 /**
  * Tablica docelowych arkuszy (tylko zawierających dane)
  * @type {[string, ExpSheet][]} targets Tablica docelowych wielkości arkuszy
  */
 
-const targets = Object.entries(TARGET_SHEETS).filter(
-	([, { status }]) => status
-);
+// const targets = Object.entries(TARGET_SHEETS).filter(
+// 	([, { status }]) => status
+// );
 
 /**
  * Helper
@@ -77,7 +76,7 @@ const getCache = prefix => target =>
  * Regeneruj cache - wygeneruj losowe liczby i wklej je do cacha
  */
 const regenerateCache = () => {
-	targets.forEach(([, { size }]) => {
+	TARGETS.forEach(([, { size }]) => {
 		const data = randomIntegersArray2d(size, 15);
 		crusherCache.put(`va${size}`, data, 360); // maxymalny czas cacha
 		crusherCache.put(`vb${size}`, data, 360); // maxymalny czas cacha
@@ -127,7 +126,7 @@ const randomFnCacheD = [buildTask('cache', getCache, ['vd'], 'd')];
  */
 
 const runRandom = functionsSet => () => {
-	const [[, target]] = randomFromArray(targets, 1);
+	const [[, target]] = randomFromArray(TARGETS, 1);
 	const [task] = randomFromArray(functionsSet, 1);
 
 	single(target, task);

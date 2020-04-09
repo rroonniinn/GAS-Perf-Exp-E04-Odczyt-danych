@@ -6,6 +6,7 @@
  * @property {ExpStructure} structure Struktura arkusza biorącego udział w ekspermencie
  * @property {Object<string, number>} samples Rozmiar arkuszy biorących udział w eksperymencie. Dostępnych jest maksymalnie 8 slotów. Można użyć mniej nie tworząc właściwości s2-s8. Musi być min jeden arkusz.
  * @property {Object<string, PrintResults>} printTo Info na temat plików, do których wklajane są dane z eksperymentów
+ * @property {ExpMisc} misc Dodatkowe ustawienia rzadko modyfikowane
  *
  */
 
@@ -15,6 +16,17 @@
  * @property {'col'|'row'} fixed Który wymiar arkusza jest niezmienny
  * @property {number} fixedSize Wielkość stałego wymiaru
  * @property {boolean} randomData Czy wypełnić losowymi danymi
+ */
+
+/**
+ * Ustawienia eskperymentu rzadko zmieniane
+ * @typedef {Object} ExpMisc
+ * @property {string} templatPrintTo URL do tempaltu z wynikiami eksperymntów
+ * @property {string} printToSubname Nazwa pojawiająca się w tytule pliku z wynikami
+ * @property {string} dataFolder Nazwa katalogu z danymi testowymi
+ * @property {string} externalsSheetName Nazwa arkusza z danymi dla plików do eksperymentu External
+ * @property {string} externalsPrefix Przedrostek nazwy plików z danymi dla eskperymentów External
+ * @property {string} hubName Nazwa pliku z danymi do eksperymentów Hub
  */
 
 /**

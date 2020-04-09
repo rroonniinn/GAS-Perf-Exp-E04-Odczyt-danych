@@ -7,30 +7,31 @@
  * @typedef {import('./types').PrintResults} PrintResults
  */
 
-import { copyFile } from '../../../GAS | Library/v01/gas/copyFile';
-import { getIdFromUrl } from '../../../GAS | Library/v02/gas/getIdFromUrl';
+import { copyFile } from '../../../GAS | Library/v02/gas/copyFile';
 import { addToProps } from '../../../GAS | Library/v01/gas/properties';
 import { adjustColumns } from '../../../GAS | Library/v01/gas/adjustColumns';
 import { adjustRows } from '../../../GAS | Library/v01/gas/adjustRows';
 import { randomIntegersArray2d } from '../../../GAS | Library/v02/arr/randomIntegersArray2d';
 import { paste } from '../../../GAS | Library/v02/gas/paste';
 import { deleteSheets } from '../../../GAS | Library/v01/gas/deleteSheets';
-import { createFolder } from '../../../GAS | Library/v01/gas/createFolder';
+import { createFolder } from '../../../GAS | Library/v02/gas/createFolder';
 import { getContainingFolder } from '../../../GAS | Library/v01/gas/getContainingFolder';
 import { createSpreadsheetIn } from '../../../GAS | Library/v02/gas/createSpreadsheetIn';
 import { pipe } from '../../../GAS | Library/v02/fp/pipe';
 import { seq } from '../../../GAS | Library/v01/fp/seq';
 
-import {
-	TEMPLATE_PRINT_TO,
-	EXTERNAL_SHEET,
-	EXP_SETUP,
-	FILES_FOLDER,
-	HUB_NAME,
-} from './config';
+import { EXP_SETUP } from './config';
 
-const { title, structure, samples, printTo } = EXP_SETUP;
+const { title, structure, samples, printTo, misc } = EXP_SETUP;
 const { fixedSize, fixed, randomData } = structure;
+const {
+	templatPrintTo,
+	externalsSheetName,
+	dataFolder,
+	hubName,
+	externalsPrefix,
+	printToSubname,
+} = misc;
 
 /**
  * Tablica rozmiarów arkuszy które mają się znależć w plikach
@@ -65,16 +66,16 @@ const experimentRoot = getContainingFolder(localSpreadsheet);
 
 const buildPrintToFiles = urls => ([geo, fileData]) => {
 	/* Utwórz plik na bazie templatu */
-	const fileId = copyFile(
-		experimentRoot.getId(),
-		`${title} : Wyniki : ${fileData.prefix}. ${fileData.name}`,
-		getIdFromUrl(TEMPLATE_PRINT_TO)
-	);
-
-	const file = SpreadsheetApp.openById(fileId);
+	const name = `${title} : ${printToSubname} : ${fileData.prefix}. ${fileData.name}`;
+	const newFileId = copyFile(
+		templatPrintTo,
+		name,
+		experimentRoot
+	).getId();
 
 	/* Zmodyfikuj wygląd i dane */
-	file.getSheetByName('Wyniki')
+	SpreadsheetApp.openById(newFileId)
+		.getSheetByName('Wyniki')
 		.getRange('A1:E4')
 		.setBackground(fileData.colorDark)
 		.getSheet()
@@ -99,7 +100,7 @@ const buildPrintToFiles = urls => ([geo, fileData]) => {
 			sheet.getRange('A1:BK2').setBackground(fileData.colorLight)
 		);
 
-	urls[geo] = file.getId();
+	urls[geo] = newFileId;
 };
 
 /**
@@ -152,11 +153,11 @@ const buildLocalFile = () => {
 
 /**
  * Buduje plik Huba
- * @param {string} parentId Id katalogu w którym ma być utworzony plik
+ * @param {GoogleAppsScript.Drive.Folder} parent Folder katalogu w którym ma być utworzony plik
  */
 
-const buildHub = parentId => {
-	const hubSpreadsheet = createSpreadsheetIn(parentId, HUB_NAME);
+const buildHub = parent => {
+	const hubSpreadsheet = createSpreadsheetIn(parent, hubName);
 	samplesArr
 		.map(({ size }) => size)
 		.forEach(insertProperSheet(hubSpreadsheet));
@@ -174,23 +175,23 @@ const buildHub = parentId => {
 
 /**
  * Tworzy pliki z danymi do eksperymentów external
- * @param {string} parentId Id folderu w którym mają znajdować się pliki
+ * @param {GoogleAppsScript.Drive.Folder} parent Folder katalogu w którym ma być utworzony plik
  */
 
-const buildExternals = parentId => {
+const buildExternals = parent => {
 	const urls = {};
 
 	samplesArr.forEach(({ code, size }) => {
 		const externalSpreadsheet = createSpreadsheetIn(
-			parentId,
-			`file${size}`
+			parent,
+			`${externalsPrefix}${size}`
 		);
 		insertProperSheet(externalSpreadsheet)(size).setName(
-			EXTERNAL_SHEET
+			externalsSheetName
 		);
 		deleteSheets(
 			externalSpreadsheet,
-			sheet => sheet.getName() !== EXTERNAL_SHEET
+			sheet => sheet.getName() !== externalsSheetName
 		);
 
 		urls[code] = externalSpreadsheet.getId();
@@ -211,7 +212,7 @@ const buildStructure = () => {
 	// 2. Pliki z danymi
 	pipe(
 		buildLocalFile,
-		() => createFolder(experimentRoot.getId(), FILES_FOLDER),
+		() => createFolder(experimentRoot, dataFolder),
 		seq(buildHub, buildExternals)
 	)();
 };
