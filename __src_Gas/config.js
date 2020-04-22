@@ -1,14 +1,19 @@
 /**
- * @typedef {import('./types').ExpSetup} ExpSetup
+ * Kolory eksperymentu
  */
+const colors = {
+	light: '#34a853',
+	dark: '#1f8b3c',
+	accent: '#ffff00',
+};
 
 /**
  * Ustawienie całego eksperymentu
- * @type {ExpSetup} EXP_SETUP
+ * @type {import('./../../../../00. My Library/v02/experiments/types').ExpSetup} EXP_SETUP
  */
 
 const EXP_SETUP = {
-	title: 'Odczyt : Całość',
+	title: 'Odczyt : Całość (1 min)',
 	method: 'Single Random',
 	structure: {
 		fixed: 'col',
@@ -25,12 +30,13 @@ const EXP_SETUP = {
 		s7: 8000,
 		s8: 16000,
 	},
-	printTo: {
+	results: {
 		loc: {
 			prefix: 'A',
 			name: 'Local',
-			colorLight: '#34a853',
-			colorDark: '#1f8b3c',
+			colorLight: colors.light,
+			colorDark: colors.dark,
+			accentColor: colors.accent,
 			sheetsMeaning: {
 				a: 'DataRange',
 				b: 'Full',
@@ -43,8 +49,9 @@ const EXP_SETUP = {
 		hub: {
 			prefix: 'B',
 			name: 'Hub',
-			colorLight: '#34a853',
-			colorDark: '#1f8b3c',
+			colorLight: colors.light,
+			colorDark: colors.dark,
+			accentColor: colors.accent,
 			sheetsMeaning: {
 				a: 'DataRange',
 				b: 'Full',
@@ -57,10 +64,11 @@ const EXP_SETUP = {
 		ext: {
 			prefix: 'C',
 			name: 'External',
-			colorLight: '#34a853',
-			colorDark: '#1f8b3c',
+			colorLight: colors.light,
+			colorDark: colors.dark,
+			accentColor: colors.accent,
 			sheetsMeaning: {
-				a: 'Całość',
+				a: 'DataRange',
 				b: 'Full',
 				c: 'Short',
 				d: '',
@@ -71,26 +79,34 @@ const EXP_SETUP = {
 		cache: {
 			prefix: 'D',
 			name: 'Cache',
-			colorLight: '#34a853',
-			colorDark: '#1f8b3c',
+			colorLight: colors.light,
+			colorDark: colors.dark,
+			accentColor: colors.accent,
 			sheetsMeaning: {
 				a: '1 min',
-				b: '15 min',
-				c: '30 min',
-				d: '1 h',
+				b: '',
+				c: '',
+				d: '',
 				e: '',
 				f: '',
 			},
 		},
 	},
 	misc: {
-		templatPrintTo:
+		resultsTemplate:
 			'https://docs.google.com/spreadsheets/d/139mlb1yO8e_T8Bs25yX5kTiHaCvSNRuQf8RRyH2WpTg/edit#gid=1941260253',
 		printToSubname: 'Wyniki',
 		dataFolder: '_Pliki',
 		externalsSheetName: 'Dane',
 		externalsPrefix: 'file',
+		scriptFileSufix: 'Skrypt + Local',
 		hubName: 'externalHub',
+		dashboardName: 'Dashboard',
+		dashboardMainSheet: 'Dashboard',
+		dashboardDataSheet: 'h_dropData',
+		dashboardTemplate:
+			'https://docs.google.com/spreadsheets/d/1uPhrwk4YD0-7ZXDVdKKUZ5ACjk-WCfbhBBqIAe4SiUI/edit#gid=880283590',
+		dashboardColor: colors.light,
 	},
 };
 

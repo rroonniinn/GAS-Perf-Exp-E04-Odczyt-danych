@@ -1,24 +1,35 @@
-# PRV.016 | GAS Perf. Exp | E04
-## Test: 	Odczyt danych (cały zakres)
-
-#### Kod: EX.04
+# Perf. Exp | Odczyt : Całość : 1 min
 
 #### Cel
 Poznanie czasów odczytu danych dla:
 1. Różnych struktur arkuszy (internal, external, cache)
 2. Różnych wielkości arkuszy (zestawu danych)
+3. Różnych sposobów odczytu danych (DataRange, zapis A1:O100 lub A1:O)
 
 #### Zadanie
 1. Odczyt wszystkich danych ze wskazanego źródła (cały zakres)
 
-
-#### Próbki
+#### Próbki / sample
 Arkusze o 15 kolumnach, o różnej liczbie wierszy: od 100 do 16 000
 
-#### Warianty
-1. Arkusze osadzone w pliku z którego jest uruchamiany skrypt
-2. Arkusze w odzielnych plikach (zawierające tylko dane testowane)
-3. Arkusze (dane) osadzone w cach'ach"
+#### Struktura
+1. Loc
+2. Hub
+3. Ext
+4. Cache
 
-#### Plik
-Adres pliku z czasami i wykresami: https://docs.google.com/spreadsheets/d/1myQpbcka7QBmGV0jhvLbbS9ktJGUO6kYhZ1p8G4YOM4/edit#gid=1946600950
+#### Warianty:
+##### Dla Loc, Hub, Ext:
+Pobranie danych za pomocą
+- 1. 'DataRange', czyli zakres jest wyliczany wbudowaną metodą getDataRange()
+- 2. 'Full' - dokładne podanie zakrsu - np. A1:O100
+- 3. 'Short' - jak wyżej ale bez wyliczania końca zakresu - np. A1:O
+
+##### Cache
+Tylko podstawowa metoda oparta o Crushera
+
+#### Częstotliwość testu
+Co minutę
+
+#### Pliki na Drivie (wsztstkie wersje czasowe)
+https://drive.google.com/drive/folders/17q8DIriXcrxu_NIGW-rZwhYOVwYRRFa7
